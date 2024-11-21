@@ -965,7 +965,7 @@ CameraModule::camera_get_focus_ring_range_cb(
   else
   {
     RCLCPP_INFO(get_logger(),
-                "Got minValue = %d, maxValue = %d, for camera with payload index %d.", 
+                "Got minValue = %d, maxValue = %d, for camera with payload index %d.",
                 range_list.minValue, range_list.maxValue, payload_index);
     response->success = true;
     response->min_value = range_list.minValue;
@@ -1013,8 +1013,7 @@ CameraModule::camera_set_focus_ring_value_cb(
 {
   E_DjiMountPosition payload_index =
       static_cast<E_DjiMountPosition>(request->payload_index);
-  uint16_t value = 
-      static_cast<uint16_t>(request->value);
+  uint16_t value = static_cast<uint16_t>(request->value);
   T_DjiReturnCode return_code =
       DjiCameraManager_SetFocusRingValue(payload_index, value);
   if (return_code != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)

@@ -589,9 +589,12 @@ class CameraModule : public rclcpp_lifecycle::LifecycleNode
       camera_set_infrared_zoom_service_;
   rclcpp::Service<CameraSetAperture>::SharedPtr camera_set_aperture_service_;
   rclcpp::Service<CameraGetAperture>::SharedPtr camera_get_aperture_service_;
-  rclcpp::Service<CameraGetFocusRingRange>::SharedPtr camera_get_focus_ring_range_service_;
-  rclcpp::Service<CameraGetFocusRingValue>::SharedPtr camera_get_focus_ring_value_service_;
-  rclcpp::Service<CameraSetFocusRingValue>::SharedPtr camera_set_focus_ring_value_service_;
+  rclcpp::Service<CameraGetFocusRingRange>::SharedPtr
+      camera_get_focus_ring_range_service_;
+  rclcpp::Service<CameraGetFocusRingValue>::SharedPtr
+      camera_get_focus_ring_value_service_;
+  rclcpp::Service<CameraSetFocusRingValue>::SharedPtr
+      camera_set_focus_ring_value_service_;
 
   // Action servers
   std::unique_ptr<utils::ActionServer<CameraDeleteFileByIndex>>
