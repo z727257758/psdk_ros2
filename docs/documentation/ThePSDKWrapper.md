@@ -251,6 +251,9 @@ The following camera parameters can be set/get. Please note, that some of these 
 | psdk_ros2/camera_get_focus_target           | Service   | 
 | psdk_ros2/camera_set_focus_mode             | Service   | 
 | psdk_ros2/camera_get_focus_mode             | Service   |
+| psdk_ros2/camera_get_focus_ring_range       | Service   |
+| psdk_ros2/camera_set_focus_ring_value       | Service   |
+| psdk_ros2/camera_get_focus_ring_value       | Service   |
 | psdk_ros2/camera_set_optical_zoom           | Service   | 
 | psdk_ros2/camera_get_optical_zoom           | Service   |      
 | psdk_ros2/camera_set_infrared_zoom          | Service   | 
