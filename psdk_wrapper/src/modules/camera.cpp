@@ -176,6 +176,21 @@ CameraModule::on_configure(const rclcpp_lifecycle::State &state)
       std::bind(&CameraModule::camera_get_aperture_cb, this,
                 std::placeholders::_1, std::placeholders::_2),
       qos_profile_);
+  camera_get_focus_ring_range_service_ = create_service<CameraGetFocusRingRange>(
+      "psdk_ros2/camera_get_focus_ring_range",
+      std::bind(&CameraModule::camera_get_focus_ring_range_cb, this,
+                std::placeholders::_1, std::placeholders::_2),
+      qos_profile_);
+  camera_get_focus_ring_value_service_ = create_service<CameraGetFocusRingValue>(
+      "psdk_ros2/camera_get_focus_ring_value",
+      std::bind(&CameraModule::camera_get_focus_ring_value_cb, this,
+                std::placeholders::_1, std::placeholders::_2),
+      qos_profile_);
+  camera_set_focus_ring_value_service_ = create_service<CameraSetFocusRingValue>(
+      "psdk_ros2/camera_set_focus_ring_value",
+      std::bind(&CameraModule::camera_set_focus_ring_value_cb, this,
+                std::placeholders::_1, std::placeholders::_2),
+      qos_profile_);
 
   // Camera action servers
   camera_download_file_by_index_server_ =
@@ -249,6 +264,9 @@ CameraModule::on_cleanup(const rclcpp_lifecycle::State &state)
   camera_format_sd_card_service_.reset();
   camera_get_sd_storage_info_service_.reset();
   camera_get_aperture_service_.reset();
+  camera_get_focus_ring_range_service_.reset();
+  camera_get_focus_ring_value_service_.reset();
+  camera_set_focus_ring_value_service_.reset();
 
   return CallbackReturn::SUCCESS;
 }
@@ -919,6 +937,101 @@ CameraModule::camera_get_aperture_cb(
                 payload_index);
     response->success = true;
     response->aperture = aperture;
+    return;
+  }
+}
+
+void
+CameraModule::camera_get_focus_ring_range_cb(
+    const std::shared_ptr<CameraGetFocusRingRange::Request> request,
+    const std::shared_ptr<CameraGetFocusRingRange::Response> response)
+{
+  E_DjiMountPosition payload_index =
+      static_cast<E_DjiMountPosition>(request->payload_index);
+  T_DjiCameraManagerRangeList range_list;
+
+  T_DjiReturnCode return_code =
+      DjiCameraManager_GetFocusRingRange(payload_index, &range_list);
+  if (return_code != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+  {
+    RCLCPP_ERROR(
+        get_logger(),
+        "Getting focus ring range for camera with payload index %d failed, error "
+        "code :%ld",
+        payload_index, return_code);
+    response->success = false;
+    return;
+  }
+  else
+  {
+    RCLCPP_INFO(get_logger(),
+                "Got minValue = %d, maxValue = %d, for camera with payload index %d.",
+                range_list.minValue, range_list.maxValue, payload_index);
+    response->success = true;
+    response->min_value = range_list.minValue;
+    response->max_value = range_list.maxValue;
+    return;
+  }
+}
+
+void
+CameraModule::camera_get_focus_ring_value_cb(
+    const std::shared_ptr<CameraGetFocusRingValue::Request> request,
+    const std::shared_ptr<CameraGetFocusRingValue::Response> response)
+{
+  E_DjiMountPosition payload_index =
+      static_cast<E_DjiMountPosition>(request->payload_index);
+  uint16_t value;
+
+  T_DjiReturnCode return_code =
+      DjiCameraManager_GetFocusRingValue(payload_index, &value);
+  if (return_code != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+  {
+    RCLCPP_ERROR(
+        get_logger(),
+        "Getting ring value for camera with payload index %d failed, error "
+        "code :%ld",
+        payload_index, return_code);
+    response->success = false;
+    return;
+  }
+  else
+  {
+    RCLCPP_INFO(get_logger(),
+                "Got ring value = %d for camera with payload index %d.", value,
+                payload_index);
+    response->success = true;
+    response->focus_ring_value = value;
+    return;
+  }
+}
+
+void
+CameraModule::camera_set_focus_ring_value_cb(
+    const std::shared_ptr<CameraSetFocusRingValue::Request> request,
+    const std::shared_ptr<CameraSetFocusRingValue::Response> response)
+{
+  E_DjiMountPosition payload_index =
+      static_cast<E_DjiMountPosition>(request->payload_index);
+  uint16_t value = static_cast<uint16_t>(request->value);
+  T_DjiReturnCode return_code =
+      DjiCameraManager_SetFocusRingValue(payload_index, value);
+  if (return_code != DJI_ERROR_SYSTEM_MODULE_CODE_SUCCESS)
+  {
+    RCLCPP_ERROR(
+        get_logger(),
+        "Setting ring value for camera with payload index %d failed, error "
+        "code :%ld",
+        payload_index, return_code);
+    response->success = false;
+    return;
+  }
+  else
+  {
+    RCLCPP_INFO(get_logger(),
+                "Set ring value = %d for camera with payload index %d.", value,
+                payload_index);
+    response->success = true;
     return;
   }
 }

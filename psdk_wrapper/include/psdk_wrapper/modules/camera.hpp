@@ -45,6 +45,8 @@
 #include "psdk_interfaces/srv/camera_get_laser_ranging_info.hpp"
 #include "psdk_interfaces/srv/camera_get_optical_zoom.hpp"
 #include "psdk_interfaces/srv/camera_get_sd_storage_info.hpp"
+#include "psdk_interfaces/srv/camera_get_focus_ring_range.hpp"
+#include "psdk_interfaces/srv/camera_get_focus_ring_value.hpp"
 #include "psdk_interfaces/srv/camera_get_shutter_speed.hpp"
 #include "psdk_interfaces/srv/camera_get_type.hpp"
 #include "psdk_interfaces/srv/camera_record_video.hpp"
@@ -56,6 +58,7 @@
 #include "psdk_interfaces/srv/camera_set_iso.hpp"
 #include "psdk_interfaces/srv/camera_set_optical_zoom.hpp"
 #include "psdk_interfaces/srv/camera_set_shutter_speed.hpp"
+#include "psdk_interfaces/srv/camera_set_focus_ring_value.hpp"
 #include "psdk_interfaces/srv/camera_shoot_burst_photo.hpp"
 #include "psdk_interfaces/srv/camera_shoot_interval_photo.hpp"
 #include "psdk_interfaces/srv/camera_shoot_single_photo.hpp"
@@ -100,6 +103,9 @@ class CameraModule : public rclcpp_lifecycle::LifecycleNode
   using CameraGetAperture = psdk_interfaces::srv::CameraGetAperture;
   using CameraFormatSdCard = psdk_interfaces::srv::CameraFormatSdCard;
   using CameraGetSDStorageInfo = psdk_interfaces::srv::CameraGetSDStorageInfo;
+  using CameraGetFocusRingRange = psdk_interfaces::srv::CameraGetFocusRingRange;
+  using CameraGetFocusRingValue = psdk_interfaces::srv::CameraGetFocusRingValue;
+  using CameraSetFocusRingValue = psdk_interfaces::srv::CameraSetFocusRingValue;
   /**
    * @brief Construct a new CameraModule object
    * @param node_name Name of the node
@@ -430,6 +436,33 @@ class CameraModule : public rclcpp_lifecycle::LifecycleNode
    * mounted position for which the request is made needs to be specified.
    * @param response CameraGetFileListInfo service response.
    */
+  void camera_get_focus_ring_range_cb(
+      const std::shared_ptr<CameraGetFocusRingRange::Request> request,
+      const std::shared_ptr<CameraGetFocusRingRange::Response> response);
+  /**
+   * @brief Request the range of the focus ring
+   * @param request CameraGetFocusRingRange service request. The camera
+   * mounted position for which the request is made needs to be specified.
+   * @param response CameraGetFocusRingRange service response.
+   */
+  void camera_get_focus_ring_value_cb(
+      const std::shared_ptr<CameraGetFocusRingValue::Request> request,
+      const std::shared_ptr<CameraGetFocusRingValue::Response> response);
+  /**
+   * @brief Request downloading of a file list
+   * @param request CameraGetFocusRingValue service request. The camera
+   * mounted position for which the request is made needs to be specified.
+   * @param response CameraGetFocusRingValue service response.
+   */
+  void camera_set_focus_ring_value_cb(
+      const std::shared_ptr<CameraSetFocusRingValue::Request> request,
+      const std::shared_ptr<CameraSetFocusRingValue::Response> response);
+  /**
+   * @brief Request downloading of a file list
+   * @param request CameraSetFocusRingValue service request. The camera
+   * mounted position for which the request is made needs to be specified.
+   * @param response CameraSetFocusRingValue service response.
+   */
   void camera_get_file_list_info_cb(
       const std::shared_ptr<CameraGetFileListInfo::Request> request,
       const std::shared_ptr<CameraGetFileListInfo::Response> response);
@@ -556,6 +589,12 @@ class CameraModule : public rclcpp_lifecycle::LifecycleNode
       camera_set_infrared_zoom_service_;
   rclcpp::Service<CameraSetAperture>::SharedPtr camera_set_aperture_service_;
   rclcpp::Service<CameraGetAperture>::SharedPtr camera_get_aperture_service_;
+  rclcpp::Service<CameraGetFocusRingRange>::SharedPtr
+      camera_get_focus_ring_range_service_;
+  rclcpp::Service<CameraGetFocusRingValue>::SharedPtr
+      camera_get_focus_ring_value_service_;
+  rclcpp::Service<CameraSetFocusRingValue>::SharedPtr
+      camera_set_focus_ring_value_service_;
 
   // Action servers
   std::unique_ptr<utils::ActionServer<CameraDeleteFileByIndex>>
